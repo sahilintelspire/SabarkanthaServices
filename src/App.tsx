@@ -1,21 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  ShieldCheck, 
-  Menu, 
-  X, 
-  MapPin, 
-  Phone,
-  ChevronRight,
-  Wrench,
-  Zap,
-  AirVent,
-  Droplets,
-  Hammer,
-  Paintbrush,
-  Sparkles,
-  Camera
+  ShieldCheck, Menu, X, MapPin, Phone, ChevronRight,
+  Wrench, Zap, AirVent, Droplets, Hammer, Paintbrush,
+  Sparkles, Camera, Briefcase
 } from 'lucide-react';
 import { cn } from './lib/utils';
 
@@ -26,6 +15,7 @@ import Reviews from './pages/Reviews';
 import Dashboard from './pages/Dashboard';
 import Auth from './pages/Auth';
 import Booking from './pages/Booking';
+import ProviderJoin from './pages/ProviderJoin'; // Naya page import karein
 
 // Types
 interface Service {
@@ -70,18 +60,19 @@ function Navbar() {
     <>
       <nav className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b",
-        scrolled ? "bg-white/80 backdrop-blur-md py-3 border-slate-200 shadow-sm" : "bg-transparent py-5 border-transparent"
+        scrolled ? "bg-white/90 backdrop-blur-md py-3 border-slate-200 shadow-sm" : "bg-transparent py-5 border-transparent"
       )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-orange-200">
+          <Link to="/" className="flex items-center gap-2 group">
+            <div className="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-transform">
               <ShieldCheck className="w-6 h-6" />
             </div>
-            <span className="text-xl font-bold tracking-tight text-slate-900">
+            <span className="text-xl font-bold tracking-tight text-slate-900 hidden xs:block">
               Sabarkantha<span className="text-orange-600">Services</span>
             </span>
           </Link>
 
+          {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map(link => (
               <Link 
@@ -95,43 +86,52 @@ function Navbar() {
                 {link.name}
               </Link>
             ))}
-            <Link to="/dashboard" className="text-slate-600 hover:text-orange-600 transition-colors">
-              <ShieldCheck className="w-5 h-5" />
+            
+            <div className="h-6 w-[1px] bg-slate-200 mx-2" />
+            
+            <Link to="/partner" className="text-sm font-bold text-slate-600 hover:text-orange-600 flex items-center gap-2 transition-all">
+              <Briefcase size={16} /> Partner with Us
             </Link>
-            <Link to="/auth" className="bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-slate-800 transition-all active:scale-95 shadow-lg shadow-slate-200">
+
+            <Link to="/auth" className="bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-orange-600 transition-all shadow-lg shadow-slate-100">
               Sign In
             </Link>
           </div>
 
-          <button className="md:hidden p-2 text-slate-600" onClick={() => setIsMenuOpen(true)}>
-            <Menu className="w-6 h-6" />
+          <button className="md:hidden p-2 text-slate-900" onClick={() => setIsMenuOpen(true)}>
+            <Menu className="w-7 h-7" />
           </button>
         </div>
       </nav>
 
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div 
             initial={{ opacity: 0, x: '100%' }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
-            className="fixed inset-0 bg-white z-[60] p-8 flex flex-col"
+            className="fixed inset-0 bg-white z-[60] p-6 flex flex-col"
           >
-            <div className="flex items-center justify-between mb-16">
-              <span className="text-2xl font-bold">Menu</span>
+            <div className="flex items-center justify-between mb-12">
+              <span className="text-2xl font-bold italic">Menu</span>
               <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-slate-100 rounded-full">
                 <X className="w-6 h-6" />
               </button>
             </div>
-            <div className="flex flex-col gap-8 text-3xl font-bold">
+            <div className="flex flex-col gap-6 text-2xl font-bold text-slate-900">
               {navLinks.map(link => (
-                <Link key={link.path} to={link.path} onClick={() => setIsMenuOpen(false)}>{link.name}</Link>
+                <Link key={link.path} to={link.path} onClick={() => setIsMenuOpen(false)} className="hover:text-orange-600 transition-colors">{link.name}</Link>
               ))}
-              <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
-              <Link to="/auth" onClick={() => setIsMenuOpen(false)}>Login</Link>
+              <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>My Dashboard</Link>
+              <Link to="/auth" onClick={() => setIsMenuOpen(false)}>Sign In</Link>
             </div>
-            <div className="mt-auto">
-              <Link to="/booking" onClick={() => setIsMenuOpen(false)} className="block w-full bg-orange-600 text-white py-5 rounded-2xl font-bold text-xl text-center">
+            
+            <div className="mt-auto space-y-4">
+              <Link to="/partner" onClick={() => setIsMenuOpen(false)} className="block w-full bg-slate-900 text-white py-5 rounded-2xl font-bold text-xl text-center shadow-xl">
+                 Join as Expert
+              </Link>
+              <Link to="/booking" onClick={() => setIsMenuOpen(false)} className="block w-full bg-orange-600 text-white py-5 rounded-2xl font-bold text-xl text-center shadow-xl">
                 Book a Service
               </Link>
             </div>
@@ -217,7 +217,7 @@ export default function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-[#FDFCFB] text-slate-900 font-sans selection:bg-orange-100 selection:text-orange-900">
+      <div className="min-h-screen bg-[#FDFCFB] text-slate-900 font-sans selection:bg-orange-100">
         <Navbar />
         
         <main>
@@ -229,6 +229,7 @@ export default function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/booking" element={<Booking />} />
+              <Route path="/partner" element={<ProviderJoin />} />
             </Routes>
           </AnimatePresence>
         </main>
